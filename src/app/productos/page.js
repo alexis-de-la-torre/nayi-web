@@ -37,34 +37,79 @@ function downloadString(content, mimeType, filename){
   a.click() // Start downloading
 }
 
+function ConvertToCSV(objArray) {
+  var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+  var str = '';
+
+  for (var i = 0; i < array.length; i++) {
+    var line = '';
+    for (var index in array[i]) {
+      if (line != '') line += ','
+
+      line += array[i][index];
+    }
+
+    str += line + '\r\n';
+  }
+
+  return str;
+}
+
+function jsonToCsv(jsonData) {
+  let csv = '';
+  // Get the headers
+  let headers = Object.keys(jsonData[0]);
+  csv += headers.join(',') + '\n';
+  // Add the data
+  jsonData.forEach(function (row) {
+    let data = headers.map(header => JSON.stringify(row[header])).join(','); // Add JSON.stringify statement
+    csv += data + '\n';
+  });
+  return csv;
+}
+
 export default function Products() {
   const {products} = useContext(Context)
   const router = useRouter()
 
   const handleDownloadCsv = async () => {
-    let formData = new FormData();
-    formData.append('email', 'alexiscedros@gmail.com');
-    formData.append('json', JSON.stringify(products));
+    // let formData = new FormData();
+    // // formData.append('email', 'alexiscedros@gmail.com');
+    // formData.append('json', JSON.stringify(products));
+    //
+    // const csv = await fetch(
+    //   "http://json-parser.keboola.com/convert",
+    //   {
+    //     body: formData,
+    //     method: "post"
+    //   }
+    // )
+    //   .then(x => x.text())
+    //
+    // console.log(csv)
 
-    const csv = await fetch(
-      "https://data.page/api/getcsv",
-      {
-        body: formData,
-        method: "post"
-      }
-    )
-      .then(x => x.text())
-      .then(text => {
-      // downloadString(text, "text/csv", "productos.csv")
+    // console.log(ConvertToCSV(products))
+    // console.log(jsonToCsv(products))
 
-        return new Blob([text], {type: "text/plain;charset=utf-8"});
-        // saveAs(blob, "productos.csv");
-    })
-
+    // const csv = await fetch(
+    //   "https://data.page/api/getcsv",
+    //   {
+    //     body: formData,
+    //     method: "post"
+    //   }
+    // )
+    //   .then(x => x.text())
+    //   .then(text => {
+    //   // downloadString(text, "text/csv", "productos.csv")
+    //
+    //     return new Blob([ConvertToCSV(products)], {type: "text/plain;charset=utf-8"});
+    //     // saveAs(blob, "productos.csv");
+    // })
+    //
     const upload = await basicUpload({
       accountId: "kW15cGi",
       apiKey: "public_kW15cGi5CYH2GYV4AFwk1JaKh3uE",
-      requestBody: csv,
+      requestBody: new Blob([jsonToCsv(products)], {type: "text/plain;charset=utf-8"}),
       querystring: {fileName: `productos${Date.now()}.csv`}
     }).then(
       response => router.push(response.fileUrl),
