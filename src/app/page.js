@@ -48,7 +48,7 @@ export default function Home() {
             onChange={(event) => setValue(event.currentTarget.value)}
           />
 
-          <Button onClick={handleSubmit}>Buscar</Button>
+          <Button onClick={handleSubmit} disabled={value === ""}>Buscar</Button>
 
           <Stack gap={0} mt="lg">
             <Button variant="subtle" size="xs" onClick={() => handleTest(1)}>

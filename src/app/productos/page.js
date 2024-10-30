@@ -1,12 +1,44 @@
 "use client"
 
-import {Box, Center, Container, Spoiler, Stack, Table, Text} from "@mantine/core"
+import {Affix, Box, Button, Center, Container, Group, Spoiler, Stack, Table, Text} from "@mantine/core"
 import {useContext} from "react"
 import {Context} from "@/app/providers"
 import Image from "next/image"
 
+function downloadString(text, fileType, fileName) {
+  var blob = new Blob([text], { type: fileType });
+
+  var a = document.createElement('a');
+  a.download = fileName;
+  a.href = URL.createObjectURL(blob);
+  a.dataset.downloadurl = [fileType, a.download, a.href].join(':');
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1500);
+}
+
 export default function Products() {
   const {products} = useContext(Context)
+
+  const handleDownloadCsv = () => {
+    let formData = new FormData();
+    formData.append('email', 'alexiscedros@gmail.com');
+    formData.append('json', JSON.stringify(products));
+
+    fetch(
+      "https://data.page/api/getcsv",
+      {
+        body: formData,
+        method: "post"
+      }
+    )
+      .then(x => x.text())
+      .then(text => {
+      downloadString(text, "text/csv", "productos.csv")
+    })
+  }
 
   return (
     <Container size="xs">
@@ -75,6 +107,18 @@ export default function Products() {
           </Table>
         ))}
       </Stack>
+
+      <Affix w="100vw" bg="white" p="md" style={{borderTop: "1px solid rgb(204, 204, 204)"}}>
+        <Group>
+          <Button size="xs" fullWidth flex={1} variant="outline" onClick={() => handleDownloadCsv()}>
+             Descargar CSV
+          </Button>
+
+          <Button size="xs" fullWidth flex={1} variant="outline">
+            Descargar Imagenes
+          </Button>
+        </Group>
+      </Affix>
     </Container>
   )
 }
