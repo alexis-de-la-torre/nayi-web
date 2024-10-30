@@ -34,7 +34,7 @@ export default function Home() {
   }
 
   return (
-    <Container size="xs" m="lg">
+    <Container size="xs">
       <Center h="100svh">
         <Stack w="100%">
           <Alert icon={<Info />}>Pega tu lista de SKUs de inmeza.com y luego presiona <strong>Buscar</strong></Alert>
