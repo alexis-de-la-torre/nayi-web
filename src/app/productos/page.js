@@ -4,6 +4,7 @@ import {Affix, Box, Button, Center, Container, Group, Spoiler, Stack, Table, Tex
 import {useContext} from "react"
 import {Context} from "@/app/providers"
 import Image from "next/image"
+import {useRouter} from "next/navigation"
 
 function downloadString(text, fileType, fileName) {
   var blob = new Blob([text], { type: fileType });
@@ -21,6 +22,7 @@ function downloadString(text, fileType, fileName) {
 
 export default function Products() {
   const {products} = useContext(Context)
+  const router = useRouter()
 
   const handleDownloadCsv = () => {
     let formData = new FormData();
@@ -38,6 +40,45 @@ export default function Products() {
       .then(text => {
       downloadString(text, "text/csv", "productos.csv")
     })
+  }
+
+  const handleDownloadImages = async () => {
+    // IcuIAwVeeCxm
+    const images = products.map(x => "https://" + x.img.substr(2))
+
+    let formData = new FormData();
+
+    for (let i = 0; i < images.length; i++) {
+      formData.append(`Files[${i}]`, images[i]);
+    }
+
+    formData.append('StoreFile', true);
+
+    const file = await fetch(
+      "https://v2.convertapi.com/convert/any/to/zip",
+      {
+        headers: {
+          "Authorization": "Bearer secret_4AHzQGKCs0YMfWEY"
+        },
+        body: formData,
+        method: "post"
+      }).then(res => res.json())
+
+    router.push(file.Files[0].Url)
+
+
+    // let tempConvert = convertapi('secret_4AHzQGKCs0YMfWEY')
+    // tempConvert.convert("zip", {
+    //   Files: images
+    // })
+
+    // postRequest(
+    //   "https://api.archiveapi.com/zip?secret=IcuIAwVeeCxm",
+    //   {
+    //     files: images,
+    //     archiveName: "imagenes.zip",
+    //   }
+    // )
   }
 
   return (
@@ -114,7 +155,7 @@ export default function Products() {
              Descargar CSV
           </Button>
 
-          <Button size="xs" fullWidth flex={1} variant="outline">
+          <Button size="xs" fullWidth flex={1} variant="outline" onClick={() => handleDownloadImages()}>
             Descargar Imagenes
           </Button>
         </Group>
