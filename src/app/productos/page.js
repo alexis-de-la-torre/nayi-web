@@ -5,6 +5,7 @@ import {useContext} from "react"
 import {Context} from "@/app/providers"
 import Image from "next/image"
 import {useRouter} from "next/navigation"
+import { saveAs } from 'file-saver';
 
 // function downloadString(text, fileType, fileName) {
 //   var blob = new Blob([text], { type: fileType });
@@ -47,7 +48,10 @@ export default function Products() {
     )
       .then(x => x.text())
       .then(text => {
-      downloadString(text, "text/csv", "productos.csv")
+      // downloadString(text, "text/csv", "productos.csv")
+
+        var blob = new Blob([text], {type: "text/plain;charset=utf-8"});
+        saveAs(blob, "productos.csv");
     })
   }
 
