@@ -7,19 +7,26 @@ import Image from "next/image"
 import {useRouter} from "next/navigation"
 import { saveAs } from 'file-saver';
 
-// function downloadString(text, fileType, fileName) {
-//   var blob = new Blob([text], { type: fileType });
-//
-//   var a = document.createElement('a');
-//   a.download = fileName;
-//   a.href = URL.createObjectURL(blob);
-//   a.dataset.downloadurl = [fileType, a.download, a.href].join(':');
-//   a.style.display = "none";
-//   document.body.appendChild(a);
-//   a.click();
-//   document.body.removeChild(a);
-//   setTimeout(function() { URL.revokeObjectURL(a.href); }, 1500);
-// }
+async function basicUpload(params) {
+  const baseUrl  = "https://api.bytescale.com";
+  const path     = `/v2/accounts/${params.accountId}/uploads/binary`;
+  const entries  = obj => Object.entries(obj).filter(([,val]) => (val ?? null) !== null);
+  const query    = entries(params.querystring ?? {})
+    .flatMap(([k,v]) => Array.isArray(v) ? v.map(v2 => [k,v2]) : [[k,v]])
+    .map(kv => kv.join("=")).join("&");
+  const response = await fetch(`${baseUrl}${path}${query.length > 0 ? "?" : ""}${query}`, {
+    method: "POST",
+    body: params.requestBody,
+    headers: Object.fromEntries(entries({
+      "Authorization": `Bearer ${params.apiKey}`,
+      "X-Upload-Metadata": JSON.stringify(params.metadata)
+    }))
+  });
+  const result = await response.json();
+  if (Math.floor(response.status / 100) !== 2)
+    throw new Error(`Bytescale API Error: ${JSON.stringify(result)}`);
+  return result;
+}
 
 function downloadString(content, mimeType, filename){
   const a = document.createElement('a') // Create "a" element
@@ -34,12 +41,12 @@ export default function Products() {
   const {products} = useContext(Context)
   const router = useRouter()
 
-  const handleDownloadCsv = () => {
+  const handleDownloadCsv = async () => {
     let formData = new FormData();
     formData.append('email', 'alexiscedros@gmail.com');
     formData.append('json', JSON.stringify(products));
 
-    fetch(
+    const csv = await fetch(
       "https://data.page/api/getcsv",
       {
         body: formData,
@@ -50,9 +57,19 @@ export default function Products() {
       .then(text => {
       // downloadString(text, "text/csv", "productos.csv")
 
-        var blob = new Blob([text], {type: "text/plain;charset=utf-8"});
-        saveAs(blob, "productos.csv");
+        return new Blob([text], {type: "text/plain;charset=utf-8"});
+        // saveAs(blob, "productos.csv");
     })
+
+    const upload = await basicUpload({
+      accountId: "kW15cGi",
+      apiKey: "public_kW15cGi5CYH2GYV4AFwk1JaKh3uE",
+      requestBody: csv,
+      querystring: {fileName: `productos${Date.now()}.csv`}
+    }).then(
+      response => router.push(response.fileUrl),
+      error => console.error(error)
+    );
   }
 
   const handleDownloadImages = async () => {
