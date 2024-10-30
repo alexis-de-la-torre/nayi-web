@@ -6,18 +6,27 @@ import {Context} from "@/app/providers"
 import Image from "next/image"
 import {useRouter} from "next/navigation"
 
-function downloadString(text, fileType, fileName) {
-  var blob = new Blob([text], { type: fileType });
+// function downloadString(text, fileType, fileName) {
+//   var blob = new Blob([text], { type: fileType });
+//
+//   var a = document.createElement('a');
+//   a.download = fileName;
+//   a.href = URL.createObjectURL(blob);
+//   a.dataset.downloadurl = [fileType, a.download, a.href].join(':');
+//   a.style.display = "none";
+//   document.body.appendChild(a);
+//   a.click();
+//   document.body.removeChild(a);
+//   setTimeout(function() { URL.revokeObjectURL(a.href); }, 1500);
+// }
 
-  var a = document.createElement('a');
-  a.download = fileName;
-  a.href = URL.createObjectURL(blob);
-  a.dataset.downloadurl = [fileType, a.download, a.href].join(':');
-  a.style.display = "none";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1500);
+function downloadString(content, mimeType, filename){
+  const a = document.createElement('a') // Create "a" element
+  const blob = new Blob([content], {type: mimeType}) // Create a blob (file-like object)
+  const url = URL.createObjectURL(blob) // Create an object URL from blob
+  a.setAttribute('href', url) // Set "a" element link
+  a.setAttribute('download', filename) // Set download filename
+  a.click() // Start downloading
 }
 
 export default function Products() {
