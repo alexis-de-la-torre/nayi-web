@@ -4,7 +4,7 @@ import {useContext, useState} from "react"
 import {Context} from "@/app/providers"
 import {fetchScrappedProduct} from "@/http/recepcion"
 import useSWR from "swr"
-import {Box, Center, Group, Loader, Progress, Stack, Text, Title} from "@mantine/core"
+import {Box, Center, Container, Group, Loader, Progress, Stack, Text, Title} from "@mantine/core"
 import {useCounter} from "@mantine/hooks"
 import {useRouter} from "next/navigation"
 
@@ -36,20 +36,22 @@ export default function SKUs() {
     })
 
   return (
-    <Stack h="100svh" p="xl">
-      <Box flex={1}/>
+    <Container size="xs">
+      <Stack h="100svh" p="xl">
+        <Box flex={1}/>
 
-      <Title>Recopilando datos de productos en inmeza.com</Title>
+        <Title>Recopilando datos de productos en inmeza.com</Title>
 
-      <Group c="gray.7" gap="xs">
-        <Text>{completed} de {skus.length}</Text>
-        <Text>•</Text>
-        <Text>{current}</Text>
-      </Group>
+        <Group c="gray.7" gap="xs">
+          <Text>{completed} de {skus.length}</Text>
+          <Text>•</Text>
+          <Text>{current}</Text>
+        </Group>
 
-      <Group w="100%">
-        <Progress value={completed / skus.length * 100} flex={1} />
-      </Group>
-    </Stack>
+        <Group w="100%">
+          <Progress value={completed / skus.length * 100} flex={1} />
+        </Group>
+      </Stack>
+    </Container>
   )
 }

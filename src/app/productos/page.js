@@ -163,15 +163,17 @@ export default function Products() {
       </Stack>
 
       <Affix w="100vw" bg="white" p="md" style={{borderTop: "1px solid rgb(204, 204, 204)"}}>
-        <Group>
-          <Button size="xs" fullWidth flex={1} variant="outline" onClick={() => handleDownloadCsv()}>
-             Descargar CSV
-          </Button>
+        <Container size="xs">
+          <Group>
+            <Button size="xs" fullWidth flex={1} variant="outline" onClick={() => handleDownloadCsv()}>
+              Descargar CSV
+            </Button>
 
-          <Button size="xs" fullWidth flex={1} variant="outline" onClick={() => handleDownloadImages()}>
-            Descargar Imagenes
-          </Button>
-        </Group>
+            <Button size="xs" fullWidth flex={1} variant="outline" onClick={() => handleDownloadImages()}>
+              Descargar Imagenes
+            </Button>
+          </Group>
+        </Container>
       </Affix>
     </Container>
   )
