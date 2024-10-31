@@ -6,6 +6,7 @@ import {Context} from "@/app/providers"
 import Image from "next/image"
 import {useRouter} from "next/navigation"
 import { saveAs } from 'file-saver';
+import {Download} from "lucide-react"
 
 async function basicUpload(params) {
   const baseUrl  = "https://api.bytescale.com";
@@ -228,11 +229,17 @@ export default function Products() {
         <Container size="xs">
           <Group>
             <Button size="xs" fullWidth flex={1} variant="outline" onClick={() => handleDownloadCsv()}>
-              Descargar CSV
+              <Group gap={6}>
+                <Text>CSV</Text>
+                <Download size={14}/>
+              </Group>
             </Button>
 
             <Button size="xs" fullWidth flex={1} variant="outline" onClick={() => handleDownloadImages()}>
-              Descargar Imagenes
+              <Group gap={6}>
+                <Text>Imagenes</Text>
+                <Download size={14}/>
+              </Group>
             </Button>
           </Group>
         </Container>
