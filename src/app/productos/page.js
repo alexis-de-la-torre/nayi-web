@@ -159,7 +159,7 @@ export default function Products() {
 
   return (
     <Container size="xs">
-      <Stack m="md">
+      <Stack m="md" mb={85}>
         {products.map(product => (
           <Table key={product.sku} withColumnBorders withTableBorder>
             <Table.Tbody>
